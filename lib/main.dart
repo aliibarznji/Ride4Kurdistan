@@ -16,7 +16,7 @@ class Ride4KurdistanApp extends StatelessWidget {
       useMaterial3: true,
       colorScheme: ColorScheme.fromSeed(
         seedColor: AppPalette.forest,
-        brightness: Brightness.light,
+        brightness: Brightness.dark,
         primary: AppPalette.forest,
         secondary: AppPalette.moss,
         surface: AppPalette.surface,
@@ -45,10 +45,23 @@ class Ride4KurdistanApp extends StatelessWidget {
             fontSize: 28,
             color: AppPalette.ink,
           ),
+          titleMedium: GoogleFonts.manrope(
+            color: AppPalette.ink,
+            fontWeight: FontWeight.w700,
+          ),
+          bodyLarge: GoogleFonts.manrope(color: AppPalette.ink),
+          bodyMedium: GoogleFonts.manrope(color: AppPalette.ink),
+          bodySmall: GoogleFonts.manrope(color: AppPalette.muted),
+          labelLarge: GoogleFonts.manrope(
+            color: AppPalette.ink,
+            fontWeight: FontWeight.w700,
+          ),
         ),
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
           fillColor: AppPalette.cardSoft,
+          hintStyle: const TextStyle(color: AppPalette.muted),
+          prefixIconColor: AppPalette.muted,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 18,
             vertical: 18,
@@ -999,18 +1012,19 @@ class _FeatureChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
-        color: const Color(0xFFF4EBD9),
+        color: AppPalette.cardSoft,
         borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: AppPalette.line),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 16, color: AppPalette.forest),
+          Icon(icon, size: 16, color: AppPalette.ink),
           const SizedBox(width: 8),
           Text(
             text,
             style: GoogleFonts.manrope(
-              color: AppPalette.forest,
+              color: AppPalette.ink,
               fontWeight: FontWeight.w700,
               fontSize: 12,
             ),
@@ -1117,8 +1131,9 @@ class _DashboardStatCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppPalette.card,
         borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: AppPalette.line),
         boxShadow: const [
           BoxShadow(
             color: Color(0x10000000),
@@ -1134,10 +1149,10 @@ class _DashboardStatCard extends StatelessWidget {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: AppPalette.sand,
+              color: AppPalette.cardSoft,
               borderRadius: BorderRadius.circular(14),
             ),
-            child: Icon(icon, color: AppPalette.forest),
+            child: Icon(icon, color: AppPalette.ink),
           ),
           const SizedBox(height: 14),
           Text(
@@ -1179,25 +1194,25 @@ class _QuickActionGrid extends StatelessWidget {
           title: 'Explore Routes',
           subtitle: 'Cycling and hiking paths',
           icon: Icons.map_outlined,
-          tone: Color(0xFFE9F1E4),
+          tone: Color(0xFF204534),
         ),
         _ActionCard(
           title: 'Trip Logbook',
           subtitle: 'Photos and route notes',
           icon: Icons.photo_library_outlined,
-          tone: Color(0xFFF7EADF),
+          tone: Color(0xFF1A3A2C),
         ),
         _ActionCard(
           title: 'Join Clubs',
           subtitle: 'Local group challenges',
           icon: Icons.groups_2_outlined,
-          tone: Color(0xFFE7EFEA),
+          tone: Color(0xFF254B39),
         ),
         _ActionCard(
           title: 'Safety Center',
           subtitle: 'Tracking and emergency help',
           icon: Icons.health_and_safety_outlined,
-          tone: Color(0xFFF1E5DE),
+          tone: Color(0xFF214435),
         ),
       ],
     );
@@ -1222,8 +1237,9 @@ class _ActionCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppPalette.card,
         borderRadius: BorderRadius.circular(26),
+        border: Border.all(color: AppPalette.line),
         boxShadow: const [
           BoxShadow(
             color: Color(0x10000000),
@@ -1242,7 +1258,7 @@ class _ActionCard extends StatelessWidget {
               color: tone,
               borderRadius: BorderRadius.circular(16),
             ),
-            child: Icon(icon, color: AppPalette.forest),
+            child: Icon(icon, color: AppPalette.ink),
           ),
           const Spacer(),
           Text(
@@ -1276,8 +1292,9 @@ class _HighlightCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppPalette.card,
         borderRadius: BorderRadius.circular(28),
+        border: Border.all(color: AppPalette.line),
         boxShadow: const [
           BoxShadow(
             color: Color(0x10000000),
@@ -1293,7 +1310,7 @@ class _HighlightCard extends StatelessWidget {
             height: 108,
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [Color(0xFFB5654D), Color(0xFFD4A373)],
+                colors: [Color(0xFF1E4D3C), Color(0xFF2E6B52)],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
               ),
@@ -1347,13 +1364,14 @@ class _HighlightCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: AppPalette.sand,
+        color: AppPalette.cardSoft,
         borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: AppPalette.line),
       ),
       child: Text(
         text,
         style: GoogleFonts.manrope(
-          color: AppPalette.forest,
+          color: AppPalette.ink,
           fontSize: 11,
           fontWeight: FontWeight.w800,
         ),
