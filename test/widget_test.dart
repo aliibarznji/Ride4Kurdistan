@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ride4kurdistan/main.dart';
+import 'package:ride4kurdistan/app/ride4kurdistan_app.dart';
 
 void main() {
   testWidgets('Splash navigates to auth page', (WidgetTester tester) async {
