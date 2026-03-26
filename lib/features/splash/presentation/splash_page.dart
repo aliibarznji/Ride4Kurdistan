@@ -16,34 +16,67 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
-  bool _showContent = false;
+  final PageController _pageController = PageController();
+  int _currentPage = 0;
+
+  static const List<_OnboardingSlide> _slides = [
+    _OnboardingSlide(
+      icon: Icons.terrain_rounded,
+      title: 'Ride4Kurdistan',
+      description:
+          'Adventure, culture, and eco-tourism for the Kurdistan Region in one clean mobile experience.',
+      chips: ['Cycling', 'Hiking', 'Camping'],
+    ),
+    _OnboardingSlide(
+      icon: Icons.explore_rounded,
+      title: 'How To Use The App',
+      description:
+          'Browse routes, save places you love, explore quick actions, and keep your next outdoor trip organized in one place.',
+      chips: ['Explore routes', 'Save highlights', 'Track plans'],
+    ),
+    _OnboardingSlide(
+      icon: Icons.privacy_tip_rounded,
+      title: 'Privacy And Safety',
+      description:
+          'We keep onboarding simple, explain what the app does, and help travelers start with more confidence around routes and local experiences.',
+      chips: ['Privacy first', 'Guest access', 'Safer trips'],
+    ),
+  ];
 
   @override
-  void initState() {
-    super.initState();
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
 
-    Future.delayed(const Duration(milliseconds: 120), () {
-      if (mounted) {
-        setState(() => _showContent = true);
-      }
-    });
+  Future<void> _handleNext() async {
+    if (_currentPage == _slides.length - 1) {
+      _goToAuth();
+      return;
+    }
 
-    Future.delayed(const Duration(milliseconds: 2600), () {
-      if (!mounted) return;
-      Navigator.of(context).pushReplacement(
-        PageRouteBuilder<void>(
-          pageBuilder: (context, animation, secondaryAnimation) =>
-              const AuthPage(),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return FadeTransition(opacity: animation, child: child);
-          },
-        ),
-      );
-    });
+    await _pageController.nextPage(
+      duration: const Duration(milliseconds: 320),
+      curve: Curves.easeOutCubic,
+    );
+  }
+
+  void _goToAuth() {
+    Navigator.of(context).pushReplacement(
+      PageRouteBuilder<void>(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            const AuthPage(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(opacity: animation, child: child);
+        },
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final isLastPage = _currentPage == _slides.length - 1;
+
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -71,126 +104,159 @@ class _SplashPageState extends State<SplashPage> {
               color: Color(0x123A8A67),
             ),
             SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.all(28),
-                child: Column(
-                  children: [
-                    const Spacer(),
-                    AnimatedOpacity(
-                      duration: const Duration(milliseconds: 650),
-                      opacity: _showContent ? 1 : 0,
-                      child: AnimatedSlide(
-                        duration: const Duration(milliseconds: 650),
-                        offset:
-                            _showContent ? Offset.zero : const Offset(0, 0.08),
-                        child: Center(
-                          child: ConstrainedBox(
-                            constraints: const BoxConstraints(maxWidth: 460),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(34),
-                              child: BackdropFilter(
-                                filter: ImageFilter.blur(
-                                  sigmaX: 18,
-                                  sigmaY: 18,
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  return Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 20),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              'Welcome',
+                              style: GoogleFonts.manrope(
+                                color: Colors.white.withValues(alpha: 0.78),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            const Spacer(),
+                            TextButton(
+                              onPressed: _goToAuth,
+                              child: Text(
+                                'Skip',
+                                style: GoogleFonts.manrope(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w700,
                                 ),
-                                child: Container(
-                                  padding: const EdgeInsets.all(28),
-                                  decoration: BoxDecoration(
-                                    color: AppPalette.cardSoft.withValues(
-                                      alpha: 0.78,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        Expanded(
+                          child: Center(
+                            child: ConstrainedBox(
+                              constraints: const BoxConstraints(maxWidth: 640),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(34),
+                                child: BackdropFilter(
+                                  filter:
+                                      ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+                                  child: Container(
+                                    width: double.infinity,
+                                    padding: const EdgeInsets.all(28),
+                                    decoration: BoxDecoration(
+                                      color: AppPalette.cardSoft.withValues(
+                                        alpha: 0.78,
+                                      ),
+                                      borderRadius: BorderRadius.circular(34),
+                                      border: Border.all(
+                                        color: AppPalette.line.withValues(
+                                          alpha: 0.90,
+                                        ),
+                                      ),
                                     ),
-                                    borderRadius: BorderRadius.circular(34),
-                                    border: Border.all(
-                                      color: AppPalette.line.withValues(
-                                        alpha: 0.90,
-                                      ),
+                                    child: PageView.builder(
+                                      controller: _pageController,
+                                      itemCount: _slides.length,
+                                      onPageChanged: (index) {
+                                        setState(() => _currentPage = index);
+                                      },
+                                      itemBuilder: (context, index) {
+                                        final item = _slides[index];
+                                        return _SplashSlideCard(slide: item);
+                                      },
                                     ),
-                                  ),
-                                  child: Column(
-                                    children: [
-                                      Container(
-                                        height: 86,
-                                        width: 86,
-                                        decoration: BoxDecoration(
-                                          color: AppPalette.moss,
-                                          borderRadius:
-                                              BorderRadius.circular(28),
-                                        ),
-                                        child: const Icon(
-                                          Icons.terrain_rounded,
-                                          size: 42,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 22),
-                                      Text(
-                                        'Ride4Kurdistan',
-                                        textAlign: TextAlign.center,
-                                        style: GoogleFonts.dmSerifDisplay(
-                                          color: Colors.white,
-                                          fontSize: 38,
-                                          height: 1.05,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 12),
-                                      Text(
-                                        'Adventure, culture, and eco-tourism for the Kurdistan Region in one clean mobile experience.',
-                                        textAlign: TextAlign.center,
-                                        style: GoogleFonts.manrope(
-                                          color: Colors.white.withValues(
-                                            alpha: 0.80,
-                                          ),
-                                          fontSize: 15,
-                                          height: 1.6,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 24),
-                                      const Wrap(
-                                        alignment: WrapAlignment.center,
-                                        spacing: 10,
-                                        runSpacing: 10,
-                                        children: [
-                                          PillLabel('Cycling'),
-                                          PillLabel('Hiking'),
-                                          PillLabel('Camping'),
-                                        ],
-                                      ),
-                                    ],
                                   ),
                                 ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    ),
-                    const Spacer(),
-                    Column(
-                      children: [
-                        SizedBox(
-                          width: 28,
-                          height: 28,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2.4,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              Colors.white.withValues(alpha: 0.85),
+                        const SizedBox(height: 18),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: List.generate(
+                            _slides.length,
+                            (index) => AnimatedContainer(
+                              duration: const Duration(milliseconds: 220),
+                              margin: const EdgeInsets.symmetric(horizontal: 4),
+                              height: 8,
+                              width: _currentPage == index ? 28 : 8,
+                              decoration: BoxDecoration(
+                                color: _currentPage == index
+                                    ? Colors.white
+                                    : Colors.white.withValues(alpha: 0.28),
+                                borderRadius: BorderRadius.circular(999),
+                              ),
                             ),
                           ),
                         ),
                         const SizedBox(height: 14),
                         Text(
-                          'Loading routes and local highlights...',
+                          'Slide ${_currentPage + 1} of ${_slides.length}',
+                          textAlign: TextAlign.center,
                           style: GoogleFonts.manrope(
-                            color: Colors.white.withValues(alpha: 0.72),
+                            color: Colors.white.withValues(alpha: 0.88),
                             fontSize: 13,
-                            fontWeight: FontWeight.w600,
+                            fontWeight: FontWeight.w700,
                           ),
+                        ),
+                        const SizedBox(height: 18),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: OutlinedButton(
+                                onPressed: _currentPage == 0
+                                    ? null
+                                    : () {
+                                        _pageController.previousPage(
+                                          duration: const Duration(
+                                            milliseconds: 280,
+                                          ),
+                                          curve: Curves.easeOutCubic,
+                                        );
+                                      },
+                                style: OutlinedButton.styleFrom(
+                                  foregroundColor: Colors.white,
+                                  side: BorderSide(
+                                    color: Colors.white.withValues(alpha: 0.22),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 18,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(22),
+                                  ),
+                                ),
+                                child: const Text('Back'),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              flex: 2,
+                              child: FilledButton(
+                                onPressed: _handleNext,
+                                style: FilledButton.styleFrom(
+                                  backgroundColor: AppPalette.moss,
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 18,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(22),
+                                  ),
+                                ),
+                                child: Text(isLastPage ? 'Get Started' : 'Next'),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                    const SizedBox(height: 24),
-                  ],
-                ),
+                  );
+                },
               ),
             ),
           ],
@@ -198,4 +264,84 @@ class _SplashPageState extends State<SplashPage> {
       ),
     );
   }
+}
+
+class _SplashSlideCard extends StatelessWidget {
+  const _SplashSlideCard({required this.slide});
+
+  final _OnboardingSlide slide;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isCompact = constraints.maxHeight < 360;
+
+        return SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: constraints.maxHeight),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  height: isCompact ? 72 : 88,
+                  width: isCompact ? 72 : 88,
+                  decoration: BoxDecoration(
+                    color: AppPalette.moss,
+                    borderRadius: BorderRadius.circular(isCompact ? 24 : 28),
+                  ),
+                  child: Icon(
+                    slide.icon,
+                    size: isCompact ? 34 : 42,
+                    color: Colors.white,
+                  ),
+                ),
+                SizedBox(height: isCompact ? 18 : 24),
+                Text(
+                  slide.title,
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.dmSerifDisplay(
+                    color: Colors.white,
+                    fontSize: isCompact ? 32 : 40,
+                    height: 1.05,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  slide.description,
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.manrope(
+                    color: Colors.white.withValues(alpha: 0.80),
+                    fontSize: isCompact ? 14 : 16,
+                    height: 1.55,
+                  ),
+                ),
+                SizedBox(height: isCompact ? 18 : 24),
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  spacing: 10,
+                  runSpacing: 10,
+                  children: slide.chips.map(PillLabel.new).toList(),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _OnboardingSlide {
+  const _OnboardingSlide({
+    required this.icon,
+    required this.title,
+    required this.description,
+    required this.chips,
+  });
+
+  final IconData icon;
+  final String title;
+  final String description;
+  final List<String> chips;
 }
